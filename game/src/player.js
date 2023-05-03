@@ -16,22 +16,30 @@ class Player extends GameObject {
         this.setupInputs();
 
         // Create the player object - a 1 unit square cube
-        const boxOptions = {width: 1, height: 1, depth: 1};
+        const boxOptions = {width: 1/5, height: 1/5, depth: 1/5};
         this.playerMesh = BABYLON.MeshBuilder.CreateBox("bird", boxOptions, scene);
+        this.playerMesh2 = BABYLON.MeshBuilder.CreateBox("bird2", boxOptions, scene);
         this.playerMaterial = new BABYLON.StandardMaterial("Player Material", scene);
+        this.playerMaterial2 = new BABYLON.StandardMaterial("Player Material2", scene);
         this.playerMesh.material = this.playerMaterial;
-        this.playerMesh.material.diffuseColor = BABYLON.Color3.White();
+        this.playerMesh2.material = this.playerMaterial2;
+        this.playerMesh.material.diffuseColor = BABYLON.Color3.Blue();
+        this.playerMesh2.material.diffuseColor = BABYLON.Color3.Red();
     }
 
     onDestroy() {
         scene.removeMesh(this.playerMesh);
+        scene.removeMesh(this.playerMesh2);
     }
+
 
     update(deltaTime) {
         // Update the players physics:
         this.velocity.y += gravity.y * deltaTime;
+        this.velocity.x += gravity.y * deltaTime;
         this.capVelocity(20);
         this.playerMesh.position.y += this.velocity.y * deltaTime;
+        this.playerMesh2.position.y += this.velocity.x * deltaTime;
         if (this.testGameOver()) {
             this.endGame()
         }
@@ -57,20 +65,28 @@ class Player extends GameObject {
 
     testGameOver() {
         let outOfBounds = this.playerMesh.position.y > gameHeight ||
-                          this.playerMesh.position.y < -gameHeight;
+                          this.playerMesh.position.y < -gameHeight ||
+                          this.playerMesh2.position.y > gameHeight ||
+                          this.playerMesh2.position.y < -gameHeight;
 
         let collision = testMatchingObjects((gameObject) => gameObject.testCollision !== undefined
             , (gameObject) => gameObject.testCollision(this.playerMesh.position.y));
+        
+        let collision2 = testMatchingObjects((gameObject) => gameObject.testCollision !== undefined
+            , (gameObject) => gameObject.testCollision(this.playerMesh2.position.y));
 
-        if (collision) {
+        if (collision || collision2) {
             console.log("IMPACT");
         }
 
-        return outOfBounds || collision;
+        return outOfBounds || collision || collision2;
     }
     
     onPlayerFlight() {
         this.velocity.y += flightForce;
+    }
+    onPlayerFlight2() {
+        this.velocity.x += flightForce;
     }
     
     capVelocity(cap) {
@@ -101,7 +117,7 @@ class Player extends GameObject {
                 deviceSource.onInputChangedObservable.add((eventData) => {
                     if (eventData.type === 'keydown' &&
                         eventData.key === ' ') {
-                        this.onPlayerFlight();
+                        this.onPlayerFlight2();
                     }
                 });
             }

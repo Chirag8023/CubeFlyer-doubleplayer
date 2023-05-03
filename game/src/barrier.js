@@ -18,7 +18,7 @@ class Barrier extends GameObject {
         this.floorBox = BABYLON.MeshBuilder.CreateBox("floorObstacle", boxOptions, scene);
         // Materials impact how an object is rendered like color, texture etc.
         let barrierMaterial = new BABYLON.StandardMaterial("Barrier Material", scene);
-        barrierMaterial.diffuseColor = BABYLON.Color3.Green();
+        barrierMaterial.diffuseColor = BABYLON.Color3.Black();
         this.ceilingBox.material = barrierMaterial;
         this.floorBox.material = barrierMaterial;
         this.assignLocations();
