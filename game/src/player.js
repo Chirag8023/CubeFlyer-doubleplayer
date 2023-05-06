@@ -83,9 +83,11 @@ class Player extends GameObject {
     }
     
     onPlayerFlight() {
+        this.velocity.y = 0;
         this.velocity.y += flightForce;
     }
     onPlayerFlight2() {
+        this.velocity.x = 0;
         this.velocity.x += flightForce;
     }
     
